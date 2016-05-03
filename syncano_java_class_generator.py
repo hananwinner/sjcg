@@ -201,9 +201,9 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(prog="sjcg",description="Generate Java class for Syncano class")
     parser.add_argument("api_key",metavar="API-KEY", type=str, help="The API-KEY used to retrieve class metadata." )
-    parser.add_argument("class_url",metavar="CLASS-URL", type=str, help="Full URL to the Syncano class or to the classes endpoint.")
-    parser.add_argument("dest_folder", metavar="DESTINATION-FOLDER",type=str,help="Path create the Java classes at.")
-    parser.add_argument("package", metavar="PACKAGE", type=str, help="package for the Java classes.")
+    parser.add_argument("class_url",metavar="CLASSES-URL", type=str, help="Full URL to the Syncano classes endpoint.")
+    parser.add_argument("dest_folder", metavar="DESTINATION-FOLDER",type=str,help="Folder path to create the Java classes at.")
+    parser.add_argument("package", metavar="PACKAGE", type=str, help="Java package to create the classes at.")
 
     #parser.print_help()
     
