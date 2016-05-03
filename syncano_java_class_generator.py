@@ -28,7 +28,7 @@ class SyncanoJavaClassTemplate:
         self.FILTER_INDEX_FIELD_ATTR = 'filter_index'
         self.ORDER_INDEX_FIELD_ATTR = 'order_index'  
     def get_class_paragraph(self, CapitalCamelName, syncano_name, json_schema):
-        return '%s\n\n%s\n\n%s\n%s {\n %s\n}\n'%(self.get_package_line(),self.get_imports_paragraph(),\
+        return '%s\n%s\n%s\n%s {%s\n}'%(self.get_package_line(),self.get_imports_paragraph(),\
                                     self.get_class_header_attr(syncano_name), self.get_class_header(CapitalCamelName),\
                                     self.make_class_body(json_schema)
                                      )
@@ -41,6 +41,8 @@ class SyncanoJavaClassTemplate:
         
     def make_class_body(self,json_schema):
         result = ''
+        const_field_names = ''
+        fields = ''
         for field in json_schema:
             filter_index = self.parse_boolean_attr(field, self.FILTER_INDEX_FIELD_ATTR)
             order_index =self.parse_boolean_attr(field, self.ORDER_INDEX_FIELD_ATTR)
@@ -50,10 +52,10 @@ class SyncanoJavaClassTemplate:
             if type == 'reference':
                 ref_type = field['target']
             [field_name, field_name_header] = self.make_field_name(name)
-            result+=field_name_header
-            result+=('\n')
-            result+=(self.make_field_field(name,filter_index,order_index,type,ref_type, field_name))
-            result+=('\n')
+            const_field_names+= '\n\t%s'%field_name_header
+            fields+='\n'
+            fields+=(self.make_field_field(name,filter_index,order_index,type,ref_type, field_name))
+        result = '\n%s%s\n'%(const_field_names,fields)    
         return result
     def make_field_name(self,name):
         field_name = 'FIELD_%s'%name.upper()
@@ -67,7 +69,7 @@ class SyncanoJavaClassTemplate:
         return 'public %s %s;'%(self.syncano_type_to_java_type(type,ref_type),\
                                 python_to_camel_case(name, False))
     def make_field_field(self,name,filter_index,order_index,type,ref_type,field_name):
-        return '%s\n%s\n'%(self.make_field_field_attr(field_name,filter_index,order_index),\
+        return '\n\t%s\n\t%s'%(self.make_field_field_attr(field_name,filter_index,order_index),\
                            self.make_field_field_field(type,ref_type,name))
     def syncano_type_to_java_type(self,type,ref_type):
         syncano_type_to_java_type_dict = {'string': 'String',\
@@ -75,7 +77,7 @@ class SyncanoJavaClassTemplate:
                                           'integer':'Integer',\
                                           'float':'Float',
                                           'boolean':'Boolean',\
-                                          'datetime':'DateTime',\
+                                          'datetime':'Date',\
                                           'file':'File',\
                                           }
         if type == 'reference':
@@ -91,10 +93,12 @@ class SyncanoJavaClassTemplate:
     def get_package_line(self):
         return 'package %s;'%(self.package_name)
     def get_imports_paragraph(self):
-        return  """import com.syncano.library.annotation.SyncanoClass;  
-                import com.syncano.library.annotation.SyncanoField; 
-                import com.syncano.library.data.SyncanoObject;
-                """
+        return  """
+import com.syncano.library.annotation.SyncanoClass;
+import com.syncano.library.annotation.SyncanoField;
+import com.syncano.library.data.SyncanoObject;
+import java.util.Date;
+        """
 
 #A class to note if the class created, changed, or unchanged, or does not exist
 class SyncanoJavaClassStatus:
