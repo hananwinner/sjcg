@@ -1,3 +1,8 @@
+Copyright 2016 Hanan Wiener
+
+contact:
+hanan888@gmail.com
+
 syncano_java_class_generator
 
 Generate Java class for Syncano class
